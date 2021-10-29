@@ -1,21 +1,9 @@
-{% load static %}
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ heading }}</title>
-    <link href="{% static "vendor/bootstrap/bootstrap.css" %}" rel="stylesheet">
-    
-</head>
-<body>
-    <h1>Welcome to {{ title }}</h1>
+{% block header %}
 
-    <script src="{% static "vendor/jquery/jquery.js" %}" type="text/javascipt"></script>
-    <script src="{% static "vendor/popper/popper.js" %}" type="text/javascipt"></script>
-    <script src="{% static "vendor/bootstrap/bootstrap.js" %}" type="text/javascipt"></script>
+    <div>
+        <h1 class="text-center mt-3">Welcome to {{ title }}</h1>
+    </div>
 
-</body>
-</html>
+{% endblock header %}
