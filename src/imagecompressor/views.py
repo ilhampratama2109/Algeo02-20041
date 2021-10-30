@@ -5,7 +5,7 @@ def index(request):
         'heading' : 'Image Compressor',
         'title' : 'Image Compressor',
         'nav' : [
-            ['/', 'Home'],
+            ['/', 'Beranda'],
             ['/about', 'Tentang Kami'],
         ]
     }

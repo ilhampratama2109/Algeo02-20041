@@ -4,10 +4,10 @@ from django.shortcuts import render
 
 def index(request):
     context = {
-        'heading' : 'About Us',
-        'title' : 'About Us',
+        'heading' : 'Tentang Kami',
+        'title' : 'Tentang Kami',
         'nav' : [
-            ['/', 'Home'],
+            ['/', 'Beranda'],
         ],
     }
     return render(request, 'about/index.html', context)
