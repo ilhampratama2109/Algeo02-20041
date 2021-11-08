@@ -5,5 +5,19 @@
     <div style="background-color: #FEEDE5; height: 300px">
         <h1 class="text-center mt-0 pt-3">Selamat Datang di {{ title }}</h1>
     </div>
+    <div class="container">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <table>
+                {{ data_form.as_table }}
+            </table>
+            <button type="Submit">Compress</button>
+        </form>
+
+        {% if img_url %}
+            <img src="{{ img_url }}">
+        {% endif %}
+    </div>
+    
 
 {% endblock header %}
