@@ -16,11 +16,11 @@ def SVD(m,n,withu,withv,eps,tol,a) :
             u[i][j] = a[i,j]
     #Householder's reduction to bidiagonal form
     g = x = 0
-    for i in range (n+1) :
+    for i in range (n) :
         e[i] = g
         s = 0
         l = i+1
-        for j in range (i,m+1) :
+        for j in range (i,m) :
             s = s+(u[j,i])**2
         if s < tol :
             g = 0
@@ -32,16 +32,16 @@ def SVD(m,n,withu,withv,eps,tol,a) :
                 g = -math.sqrt(s)
             h = f*g-s
             u[i,i] = f-g
-            for j in range (l,n+1) :
+            for j in range (l,n) :
                 s = 0
-                for k in range (i,m+1) :
+                for k in range (i,m) :
                     s = s+u[k,i]*u[k,j]
                 f = s/h
-                for k in range (i,m+1) :
+                for k in range (i,m) :
                     u[k,j] = u[k,j] + f*u[k,i]
         q[i] = g
         s = 0
-        for j in range (l,n+1) :
+        for j in range (l,n) :
             s = s+(u[i,j])**2
         if (s<tol) :
             g = 0
@@ -53,13 +53,13 @@ def SVD(m,n,withu,withv,eps,tol,a) :
                 g = -math.sqrt(s)
             h = f*g-s
             u[i,i+1] = f-g
-            for j in range (l,n+1) :
+            for j in range (l,n) :
                 e[j] = u[i,j]/h
-            for j in range (l,m+1) :
+            for j in range (l,m) :
                 s = 0
-                for k in range (l,n+1) :
+                for k in range (l,n) :
                     s = s+u[j,k]*u[i,k]
-                for k in range (i,n+1) :
+                for k in range (i,n) :
                     u[j,k] = u[j,k] + s*e[k]
         y = abs(q[i])+abs(e[i])
         if (y>x) :
