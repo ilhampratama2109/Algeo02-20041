@@ -1,19 +1,27 @@
 import math
+from PIL import Image
+from numpy import asarray
 
-def SVD(m,n,withu,withv,eps,tol,a) :
-    '''
-    Kamus
-    int : i,j,k,l,l1
-    float : c,f,g,h,s,x,y,z
-    array e
-    '''
-    q = [0 in range (n+1)]
-    u = [[0 for j in range (n+1)] for i in range (m+1)]
-    v = [[0 for j in range (n+1)] for i in range (n+1)]
-    e = [0 for i in range (n+1)]
-    for i in range (m+1) :
-        for j in range (n+1) :
-            u[i][j] = a[i,j]
+def SVD(a) :
+
+    # KAMUS LOKAL
+    # i, j, k, l , l1: integer
+    # c, f, g, h, s, x, y, z: float
+    # q, e: array
+
+    eps = 1.e-15
+    tol = 1.e-64 / eps
+    assert 1.0 + eps > 1.0
+    assert tol > 0.0
+    m = len(a)
+    n = len(a[0])
+    q = [0 for i in range (n)]
+    u = [[0 for j in range (n)] for i in range (m)]
+    v = [[0 for j in range (n)] for i in range (n)]
+    e = [0 for i in range (n)]
+    for i in range (m) :
+        for j in range (n) :
+            u[i][j] = a[i][j]
     #Householder's reduction to bidiagonal form
     g = x = 0
     for i in range (n) :
@@ -21,46 +29,46 @@ def SVD(m,n,withu,withv,eps,tol,a) :
         s = 0
         l = i+1
         for j in range (i,m) :
-            s = s+(u[j,i])**2
-        if s < tol :
+            s = s+(u[j][i])**2
+        if s <= tol :
             g = 0
         else :
-            f = u[i,i]
+            f = u[i][i]
             if (f<0) :
                 g = math.sqrt(s)
             else :
                 g = -math.sqrt(s)
             h = f*g-s
-            u[i,i] = f-g
+            u[i][i] = f-g
             for j in range (l,n) :
                 s = 0
                 for k in range (i,m) :
-                    s = s+u[k,i]*u[k,j]
+                    s = s+u[k][i]*u[k][j]
                 f = s/h
                 for k in range (i,m) :
-                    u[k,j] = u[k,j] + f*u[k,i]
+                    u[k][j] = u[k][j] + f*u[k][i]
         q[i] = g
         s = 0
         for j in range (l,n) :
-            s = s+(u[i,j])**2
-        if (s<tol) :
+            s = s+(u[i][j])**2
+        if (s <= tol) :
             g = 0
         else :
-            f = u[i,i+1]
+            f = u[i][i+1]
             if (f<0) :
                 g = math.sqrt(s)
             else :
                 g = -math.sqrt(s)
             h = f*g-s
-            u[i,i+1] = f-g
+            u[i][i+1] = f-g
             for j in range (l,n) :
-                e[j] = u[i,j]/h
+                e[j] = u[i][j]/h
             for j in range (l,m) :
                 s = 0
                 for k in range (l,n) :
-                    s = s+u[j,k]*u[i,k]
+                    s = s+u[j][k]*u[i][k]
                 for k in range (i,n) :
-                    u[j,k] = u[j,k] + s*e[k]
+                    u[j][k] = u[j][k] + s*e[k]
         y = abs(q[i])+abs(e[i])
         if (y>x) :
             x = y
@@ -122,13 +130,13 @@ def SVD(m,n,withu,withv,eps,tol,a) :
                     if (z < 0):
                         q[k] = -z
                         for j in range(1, n):
-                            v[j,k] = -v[j,k]
+                            v[j][k] = -v[j][k]
                 
                 x = q[l]
                 y = q[k-1]
                 g = e[k-1]
                 h = e[k]
-                f = ((y-x)*(y+z)*(g-h)*(g+h))/(2*h*y)
+                f = ((y-z)*(y+z)*(g-h)*(g+h))/(2*h*y)
                 g = math.sqrt(f*f+1)
                 if(f < 0):
                     f = ((x-z)*(x+z)+h*(y/(f-g)-h))/x
@@ -136,7 +144,7 @@ def SVD(m,n,withu,withv,eps,tol,a) :
                     f = ((x-z)*(x+z)+h*(y/(f+g)-h))/x
                 
                 c = s = 1
-                for i in range(l+1,k):
+                for i in range(l+1,k+1):
                     g = e[i]
                     y = q[i]
                     h = s*g
@@ -148,21 +156,21 @@ def SVD(m,n,withu,withv,eps,tol,a) :
                     g = -x*s+g*c
                     h = y*s
                     y = y*c
-                    for j in range(n+1):
-                        x = v[j,i-1]
-                        z = v[j,i]
-                        v[j,i-1] = x*c+z*s
-                        v[j,i] = -x*s+z*c
+                    for j in range(n):
+                        x = v[j][i-1]
+                        z = v[j][i]
+                        v[j][i-1] = x*c+z*s
+                        v[j][i] = -x*s+z*c
                     q[i-1] = z = math.sqrt(f*f+h*h)
                     c = f/z
                     s = h/z
                     f = c*g+s*y
                     x = -s*g+c*y
-                    for j in range(m+1):
-                        y = u[j, i-1]
-                        z = u[j,i]
-                        u[j,i-1] = y*c+z*s
-                        u[j,i] = -y*s+z*c
+                    for j in range(m):
+                        y = u[j][i-1]
+                        z = u[j][i]
+                        u[j][i-1] = y*c+z*s
+                        u[j][i] = -y*s+z*c
                 e[l] = 0
                 e[k] = f
                 q[k] = x
@@ -171,22 +179,22 @@ def SVD(m,n,withu,withv,eps,tol,a) :
                 c = 0 
                 s = 1
                 l1 = l-1
-                for i in range(l,k):
+                for i in range(l,k+1):
                     f = s*e[i]
-                    e[i]=x*e[i]
+                    e[i]=c*e[i]
                     if (abs(f) <= eps):
                         z = float(q[k]) 
                         if (l == k):    #masuk ke konvergen
                             if (z < 0):
                                 q[k] = -z
-                                for j in range(1, n):
-                                    v[j,k] = -v[j,k]
+                                for j in range(n):
+                                    v[j][k] = -v[j][k]
                         
                         x = q[l]
                         y = q[k-1]
                         g = e[k-1]
                         h = e[k]
-                        f = ((y-x)*(y+z)*(g-h)*(g+h))/(2*h*y)
+                        f = ((y-z)*(y+z)+(g-h)*(g+h))/(2*h*y)
                         g = math.sqrt(f*f+1)
                         if(f < 0):
                             f = ((x-z)*(x+z)+h*(y/(f-g)-h))/x
@@ -194,7 +202,7 @@ def SVD(m,n,withu,withv,eps,tol,a) :
                             f = ((x-z)*(x+z)+h*(y/(f+g)-h))/x
                         
                         c = s = 1
-                        for i in range(l+1,k):
+                        for i in range(l+1,k+1):
                             g = e[i]
                             y = q[i]
                             h = s*g
@@ -206,21 +214,21 @@ def SVD(m,n,withu,withv,eps,tol,a) :
                             g = -x*s+g*c
                             h = y*s
                             y = y*c
-                            for j in range(n+1):
-                                x = v[j,i-1]
-                                z = v[j,i]
-                                v[j,i-1] = x*c+z*s
-                                v[j,i] = -x*s+z*c
+                            for j in range(n):
+                                x = v[j][i-1]
+                                z = v[j][i]
+                                v[j][i-1] = x*c+z*s
+                                v[j][i] = -x*s+z*c
                             q[i-1] = z = math.sqrt(f*f+h*h)
                             c = f/z
                             s = h/z
                             f = c*g+s*y
                             x = -s*g+c*y
-                            for j in range(m+1):
-                                y = u[j, i-1]
-                                z = u[j,i]
-                                u[j,i-1] = y*c+z*s
-                                u[j,i] = -y*s+z*c
+                            for j in range(m):
+                                y = u[j][i-1]
+                                z = u[j][i]
+                                u[j][i-1] = y*c+z*s
+                                u[j][i] = -y*s+z*c
                         e[l] = 0
                         e[k] = f
                         q[k] = x
@@ -229,11 +237,18 @@ def SVD(m,n,withu,withv,eps,tol,a) :
                     h = q[i] = math.sqrt(f*f+g*g)
                     c = g/h
                     s = -f/h
-                    for j in range(m+1):
-                        y = u[j,l1]
-                        z = u[j,i]
-                        u[j,l1] = y*c+z*s
-                        u[j,i] = -y*s+z*c
+                    for j in range(m):
+                        y = u[j][l1]
+                        z = u[j][i]
+                        u[j][l1] = y*c+z*s
+                        u[j][i] = -y*s+z*c
 
+    return (u,q,v)
 
+img = Image.open("C:/Tubes Algeo/Tubes 2/Algeo02-20041/svd/775128.jpg")
+
+numpydata = asarray(img, dtype='int64')
+print(numpydata)
+#(x,y,z) = SVD(numpydata)
+#print(x)
 
