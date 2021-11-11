@@ -110,5 +110,130 @@ def SVD(m,n,withu,withv,eps,tol,a) :
                 u[j][i] = 0
             u[i][i] = u[i][i] + 1
 
+    # COMMENT 5
+    # diagonalization of tile bidiagonal form;
+
+    eps = eps*x
+    for k in range(n-1, -1, -1):
+        for l in range(k-1, -1, -1):  #tes f splitting
+            if (abs(e[l]) <= eps): #masuk ke test f konvergen
+                z = float(q[k]) 
+                if (l == k):    #masuk ke konvergen
+                    if (z < 0):
+                        q[k] = -z
+                        for j in range(1, n):
+                            v[j,k] = -v[j,k]
+                
+                x = q[l]
+                y = q[k-1]
+                g = e[k-1]
+                h = e[k]
+                f = ((y-x)*(y+z)*(g-h)*(g+h))/(2*h*y)
+                g = math.sqrt(f*f+1)
+                if(f < 0):
+                    f = ((x-z)*(x+z)+h*(y/(f-g)-h))/x
+                else:
+                    f = ((x-z)*(x+z)+h*(y/(f+g)-h))/x
+                
+                c = s = 1
+                for i in range(l+1,k):
+                    g = e[i]
+                    y = q[i]
+                    h = s*g
+                    g = c*g
+                    e[i-1] = z = math.sqrt(f*f+h*h)
+                    c = f/z
+                    s = h/z
+                    f = x*c+g*s
+                    g = -x*s+g*c
+                    h = y*s
+                    y = y*c
+                    for j in range(n+1):
+                        x = v[j,i-1]
+                        z = v[j,i]
+                        v[j,i-1] = x*c+z*s
+                        v[j,i] = -x*s+z*c
+                    q[i-1] = z = math.sqrt(f*f+h*h)
+                    c = f/z
+                    s = h/z
+                    f = c*g+s*y
+                    x = -s*g+c*y
+                    for j in range(m+1):
+                        y = u[j, i-1]
+                        z = u[j,i]
+                        u[j,i-1] = y*c+z*s
+                        u[j,i] = -y*s+z*c
+                e[l] = 0
+                e[k] = f
+                q[k] = x
+            
+            if(abs(q[l-1]) <= eps): #masuk ke cancellation
+                c = 0 
+                s = 1
+                l1 = l-1
+                for i in range(l,k):
+                    f = s*e[i]
+                    e[i]=x*e[i]
+                    if (abs(f) <= eps):
+                        z = float(q[k]) 
+                        if (l == k):    #masuk ke konvergen
+                            if (z < 0):
+                                q[k] = -z
+                                for j in range(1, n):
+                                    v[j,k] = -v[j,k]
+                        
+                        x = q[l]
+                        y = q[k-1]
+                        g = e[k-1]
+                        h = e[k]
+                        f = ((y-x)*(y+z)*(g-h)*(g+h))/(2*h*y)
+                        g = math.sqrt(f*f+1)
+                        if(f < 0):
+                            f = ((x-z)*(x+z)+h*(y/(f-g)-h))/x
+                        else:
+                            f = ((x-z)*(x+z)+h*(y/(f+g)-h))/x
+                        
+                        c = s = 1
+                        for i in range(l+1,k):
+                            g = e[i]
+                            y = q[i]
+                            h = s*g
+                            g = c*g
+                            e[i-1] = z = math.sqrt(f*f+h*h)
+                            c = f/z
+                            s = h/z
+                            f = x*c+g*s
+                            g = -x*s+g*c
+                            h = y*s
+                            y = y*c
+                            for j in range(n+1):
+                                x = v[j,i-1]
+                                z = v[j,i]
+                                v[j,i-1] = x*c+z*s
+                                v[j,i] = -x*s+z*c
+                            q[i-1] = z = math.sqrt(f*f+h*h)
+                            c = f/z
+                            s = h/z
+                            f = c*g+s*y
+                            x = -s*g+c*y
+                            for j in range(m+1):
+                                y = u[j, i-1]
+                                z = u[j,i]
+                                u[j,i-1] = y*c+z*s
+                                u[j,i] = -y*s+z*c
+                        e[l] = 0
+                        e[k] = f
+                        q[k] = x
+                    
+                    g = q[i]
+                    h = q[i] = math.sqrt(f*f+g*g)
+                    c = g/h
+                    s = -f/h
+                    for j in range(m+1):
+                        y = u[j,l1]
+                        z = u[j,i]
+                        u[j,l1] = y*c+z*s
+                        u[j,i] = -y*s+z*c
+
 
 
