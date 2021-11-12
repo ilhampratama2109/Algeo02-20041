@@ -2,8 +2,6 @@ from __future__ import division
 import math
 from PIL import Image
 import numpy as np
-from pathlib import Path
-from SVD_ex import svd
 
 def SVD(a) :
 
@@ -140,10 +138,10 @@ def SVD(a) :
                 if (abs(e[l]) <= eps):
                     # goto test f convergence
                     test_f_convergence = True
-                    break  # break out of l loop
+                    break  
                 if (abs(q[l-1]) <= eps):
                     # goto cancellation
-                    break  # break out of l loop
+                    break 
             if not test_f_convergence:
                 #cancellation of e[l] if l>0
                 c = 0.0
@@ -174,7 +172,7 @@ def SVD(a) :
                     q[k] = -z
                     for j in range(n):
                         v[j][k] = -v[j][k]
-                break  # break out of iteration loop and move on to next k value
+                break  
             # shift from bottom 2x2 minor
             x = q[l]
             y = q[k-1]
@@ -247,12 +245,8 @@ def modSqrt(a, b):
         else: 
             return absb*math.sqrt(1.0+(absa/absb)**2)
 
-
-
-#image processing
+# image processing
 img = Image.open("C:/Tubes Algeo/Tubes 2/Algeo02-20041/svd/landscape.jpg")
-
-
 
 image = np.array(img)
 image = image/255
@@ -271,7 +265,6 @@ if col > row:
     image_green = np.transpose(image_green)
     image_blue =  np.transpose(image_blue)
 
-#u_r, q_r, v_r = np.linalg.svd(image_red)
 u_r,q_r,v_r = SVD(image_red)
 u_g,q_g,v_g = SVD(image_green)
 u_b,q_b,v_b = SVD(image_blue)
@@ -305,15 +298,5 @@ image_recons[image_recons < 0] = 0
 image_recons[image_recons > 1] = 1
 
 im = Image.fromarray(np.uint8(image_recons*255))
-#im.show()
-
-dirout = "hasil.jpg"
-im.save(dirout)
+im.save("hasil.jpg")
 print("Selesai")
-
-#image = asarray.array()
-#numpydata = asarray(img, dtype='int64')
-#print(numpydata)
-#(x,y,z) = SVD(numpydata)
-#print(x)
-
