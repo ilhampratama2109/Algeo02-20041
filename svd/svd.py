@@ -124,125 +124,135 @@ def SVD(a) :
 
     eps = eps*x
     for k in range(n-1, -1, -1):
-        for l in range(k-1, -1, -1):  #tes f splitting
+        #tes f splitting
+        for l in range(k, -1, -1):
+            goto_test_f_convergen = False 
             if (abs(e[l]) <= eps): #masuk ke test f konvergen
-                z = q[k] 
-                if (l == k):    #masuk ke konvergen
-                    if (z < 0):
-                        q[k] = -z
-                        for j in range(n):
-                            v[j][k] = -v[j][k]
+                goto_test_f_convergen = True
+                break
+                # z = q[k]
+                # if (l == k):    #masuk ke konvergen
+                #     if (z < 0):
+                #         q[k] = -z
+                #         for j in range(n):
+                #             v[j][k] = -v[j][k]
                 
-                x = q[l]
-                y = q[k-1]
-                g = e[k-1]
-                h = e[k]
-                f = ((y-z)*(y+z)+(g-h)*(g+h))/(2.0*h*y)
-                g = pythag(f,1.0)
-                if(f < 0):
-                    f = ((x-z)*(x+z)+h*(y/(f-g)-h))/x
-                else:
-                    f = ((x-z)*(x+z)+h*(y/(f+g)-h))/x
+                # x = q[l]
+                # y = q[k-1]
+                # g = e[k-1]
+                # h = e[k]
+                # f = ((y-z)*(y+z)+(g-h)*(g+h))/(2.0*h*y)
+                # g = pythag(f,1.0)
+                # if(f < 0):
+                #     f = ((x-z)*(x+z)+h*(y/(f-g)-h))/x
+                # else:
+                #     f = ((x-z)*(x+z)+h*(y/(f+g)-h))/x
                 
-                c = s = 1
-                for i in range(l+1,k+1):
-                    g = e[i]
-                    y = q[i]
-                    h = s*g
-                    g = c*g
-                    e[i-1] = z = pythag(f,h)
-                    c = f/z
-                    s = h/z
-                    f = x*c+g*s
-                    g = -x*s+g*c
-                    h = y*s
-                    y = y*c
-                    for j in range(n):
-                        x = v[j][i-1]
-                        z = v[j][i]
-                        v[j][i-1] = x*c+z*s
-                        v[j][i] = -x*s+z*c
-                    q[i-1] = z = pythag(f,h)
-                    c = f/z
-                    s = h/z
-                    f = c*g+s*y
-                    x = -s*g+c*y
-                    for j in range(m):
-                        y = u[j][i-1]
-                        z = u[j][i]
-                        u[j][i-1] = y*c+z*s
-                        u[j][i] = -y*s+z*c
-                e[l] = 0
-                e[k] = f
-                q[k] = x
+                # c = s = 1
+                # for i in range(l+1,k):
+                #     g = e[i]
+                #     y = q[i]
+                #     h = s*g
+                #     g = c*g
+                #     e[i-1] = z = pythag(f,h)
+                #     c = f/z
+                #     s = h/z
+                #     f = x*c+g*s
+                #     g = -x*s+g*c
+                #     h = y*s
+                #     y = y*c
+                #     for j in range(n):
+                #         x = v[j][i-1]
+                #         z = v[j][i]
+                #         v[j][i-1] = x*c+z*s
+                #         v[j][i] = -x*s+z*c
+                #     q[i-1] = z = pythag(f,h)
+                #     c = f/z
+                #     s = h/z
+                #     f = c*g+s*y
+                #     x = -s*g+c*y
+                #     for j in range(m):
+                #         y = u[j][i-1]
+                #         z = u[j][i]
+                #         u[j][i-1] = y*c+z*s
+                #         u[j][i] = -y*s+z*c
+                # e[l] = 0
+                # e[k] = f
+                # q[k] = x
+                # continue
             
-            if(abs(q[l-1]) <= eps): #masuk ke cancellation
-                c = 0 
-                s = 1
-                l1 = l-1
-                for i in range(l,k+1):
-                    f = s*e[i]
-                    e[i]=c*e[i]
-                    if (abs(f) <= eps):
-                        z = float(q[k]) 
-                        if (l == k):    #masuk ke konvergen
-                            if (z < 0):
-                                q[k] = -z
-                                for j in range(n):
-                                    v[j][k] = -v[j][k]
-                        
-                        x = q[l]
-                        y = q[k-1]
-                        g = e[k-1]
-                        h = e[k]
-                        f = ((y-z)*(y+z)+(g-h)*(g+h))/(2*h*y)
-                        g = math.sqrt(f*f+1)
-                        if(f < 0):
-                            f = ((x-z)*(x+z)+h*(y/(f-g)-h))/x
-                        else:
-                            f = ((x-z)*(x+z)+h*(y/(f+g)-h))/x
-                        
-                        c = s = 1
-                        for i in range(l+1,k+1):
-                            g = e[i]
-                            y = q[i]
-                            h = s*g
-                            g = c*g
-                            e[i-1] = z = math.sqrt(f*f+h*h)
-                            c = f/z
-                            s = h/z
-                            f = x*c+g*s
-                            g = -x*s+g*c
-                            h = y*s
-                            y = y*c
-                            for j in range(n):
-                                x = v[j][i-1]
-                                z = v[j][i]
-                                v[j][i-1] = x*c+z*s
-                                v[j][i] = -x*s+z*c
-                            q[i-1] = z = math.sqrt(f*f+h*h)
-                            c = f/z
-                            s = h/z
-                            f = c*g+s*y
-                            x = -s*g+c*y
-                            for j in range(m):
-                                y = u[j][i-1]
-                                z = u[j][i]
-                                u[j][i-1] = y*c+z*s
-                                u[j][i] = -y*s+z*c
-                        e[l] = 0
-                        e[k] = f
-                        q[k] = x
-                    
-                    g = q[i]
-                    h = q[i] = math.sqrt(f*f+g*g)
-                    c = g/h
-                    s = -f/h
-                    for j in range(m):
-                        y = u[j][l1]
-                        z = u[j][i]
-                        u[j][l1] = y*c+z*s
-                        u[j][i] = -y*s+z*c
+            if(abs(q[l-1]) <= eps): 
+                #masuk ke cancellation
+                break
+     
+        if not (goto_test_f_convergen):
+            c = 0 
+            s = 1
+            l1 = l-1
+            for i in range(l,k+1):
+                f = s*e[i]
+                e[i]=c*e[i]
+                if (abs(f) <= eps):
+                    #masuk ke tes f convergence
+                    break
+                g = q[i]
+                h = q[i] = pythag(f,g)
+                c = g/h
+                s = -f/h
+                for j in range(m):
+                    y = u[j][l1]
+                    z = u[j][i]
+                    u[j][l1] = y*c+z*s
+                    u[j][i] = -y*s+z*c
+        z = q[k] 
+        if (l == k):    #masuk ke konvergen
+            if (z < 0):
+                q[k] = -z
+                for j in range(n):
+                    v[j][k] = -v[j][k]
+            break
+        x = q[l]
+        y = q[k-1]
+        g = e[k-1]
+        h = e[k]
+        f = ((y-z)*(y+z)+(g-h)*(g+h))/(2*h*y)
+        g = math.sqrt(f*f+1)
+        if(f < 0):
+            f = ((x-z)*(x+z)+h*(y/(f-g)-h))/x
+        else:
+            f = ((x-z)*(x+z)+h*(y/(f+g)-h))/x
+        
+        c = s = 1
+        for i in range(l+1,k+1):
+            g = e[i]
+            y = q[i]
+            h = s*g
+            g = c*g
+            e[i-1] = z = math.sqrt(f*f+h*h)
+            c = f/z
+            s = h/z
+            f = x*c+g*s
+            g = -x*s+g*c
+            h = y*s
+            y = y*c
+            for j in range(n):
+                x = v[j][i-1]
+                z = v[j][i]
+                v[j][i-1] = x*c+z*s
+                v[j][i] = -x*s+z*c
+            q[i-1] = z = math.sqrt(f*f+h*h)
+            c = f/z
+            s = h/z
+            f = c*g+s*y
+            x = -s*g+c*y
+            for j in range(m):
+                y = u[j][i-1]
+                z = u[j][i]
+                u[j][i-1] = y*c+z*s
+                u[j][i] = -y*s+z*c
+        e[l] = 0
+        e[k] = f
+        q[k] = x
 
     return (u,q,v)
 
@@ -256,7 +266,7 @@ def pythag(a,b):
 
 
 #image processing
-img = Image.open("D:/Kuliah/Semester 3/Algeo02-20041/svd/portrait2.jpg")
+img = Image.open("E:/algeo2/Algeo02-20041/svd/portrait2.jpg")
 image = np.array(img)
 image = image/255
 row,col,_ = image.shape
@@ -267,7 +277,7 @@ image_green = image[:,:,1]
 image_blue = image[:,:2]
 
 #u_r, q_r, v_r = np.linalg.svd(image_red)
-(u_r,q_r,v_r) = svd(image_red)
+(u_r,q_r,v_r) = SVD(image_red)
 print(u_r)
 
 
