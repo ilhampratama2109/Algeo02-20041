@@ -1,6 +1,7 @@
+from __future__ import division
 import math
 from PIL import Image
-from numpy import asarray
+import numpy as np
 
 def SVD(a) :
 
@@ -125,19 +126,19 @@ def SVD(a) :
     for k in range(n-1, -1, -1):
         for l in range(k-1, -1, -1):  #tes f splitting
             if (abs(e[l]) <= eps): #masuk ke test f konvergen
-                z = float(q[k]) 
+                z = q[k] 
                 if (l == k):    #masuk ke konvergen
                     if (z < 0):
                         q[k] = -z
-                        for j in range(1, n):
+                        for j in range(n):
                             v[j][k] = -v[j][k]
                 
                 x = q[l]
                 y = q[k-1]
                 g = e[k-1]
                 h = e[k]
-                f = ((y-z)*(y+z)*(g-h)*(g+h))/(2*h*y)
-                g = math.sqrt(f*f+1)
+                f = ((y-z)*(y+z)+(g-h)*(g+h))/(2.0*h*y)
+                g = pythag(f,1.0)
                 if(f < 0):
                     f = ((x-z)*(x+z)+h*(y/(f-g)-h))/x
                 else:
@@ -149,7 +150,7 @@ def SVD(a) :
                     y = q[i]
                     h = s*g
                     g = c*g
-                    e[i-1] = z = math.sqrt(f*f+h*h)
+                    e[i-1] = z = pythag(f,h)
                     c = f/z
                     s = h/z
                     f = x*c+g*s
@@ -161,7 +162,7 @@ def SVD(a) :
                         z = v[j][i]
                         v[j][i-1] = x*c+z*s
                         v[j][i] = -x*s+z*c
-                    q[i-1] = z = math.sqrt(f*f+h*h)
+                    q[i-1] = z = pythag(f,h)
                     c = f/z
                     s = h/z
                     f = c*g+s*y
@@ -245,10 +246,34 @@ def SVD(a) :
 
     return (u,q,v)
 
-img = Image.open("C:/Tubes Algeo/Tubes 2/Algeo02-20041/svd/775128.jpg")
+def pythag(a,b):
+    absa = abs(a)
+    absb = abs(b)
+    if absa > absb: return absa*math.sqrt(1.0+(absb/absa)**2)
+    else:
+        if absb == 0.0: return 0.0
+        else: return absb*math.sqrt(1.0+(absa/absb)**2)
 
-numpydata = asarray(img, dtype='int64')
-print(numpydata)
+
+#image processing
+img = Image.open("D:/Kuliah/Semester 3/Algeo02-20041/svd/portrait2.jpg")
+image = np.array(img)
+image = image/255
+row,col,_ = image.shape
+print("pixels: ",row, " ", col)
+
+image_red = image[:,:,0]
+image_green = image[:,:,1]
+image_blue = image[:,:2]
+
+#u_r, q_r, v_r = np.linalg.svd(image_red)
+(u_r,q_r,v_r) = svd(image_red)
+print(u_r)
+
+
+#image = asarray.array()
+#numpydata = asarray(img, dtype='int64')
+#print(numpydata)
 #(x,y,z) = SVD(numpydata)
 #print(x)
 
