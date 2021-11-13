@@ -22,6 +22,7 @@ def index(request):
         name = fs.save(uploaded_image.name, uploaded_image)
         print(fs.url(name))
         context['img_url'] = fs.url(name)
-        context['img_compressed_url'] = compress(context['img_url'], request.POST['rate'])
+        context['rate'] = request.POST['rate']
+        context['img_compressed_url'], context['runtime'], context['percentage']  = compress(context['img_url'], request.POST['rate'])
 
     return render(request, "index.html", context)

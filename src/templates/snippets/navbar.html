@@ -1,18 +1,21 @@
 {% load static %}
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+<nav class="navbar navbar-expand-lg navbar-light bg-light bg-opacity-50 shadow-0">
     <div class="container-fluid">
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav mr-auto">
-                {% for link, name in nav %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ link }}" title="">{{ name }}</a>
-                    </li>
-                {% endfor %} 
-            </ul>
+        <a class="navbar-brand" href="#">Image Compressor</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="container-fluid">
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ms-auto">
+                    {% for link, name in nav %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ link }}" title="">{{ name }}</a>
+                        </li>
+                    {% endfor %} 
+                </ul>
+            </div>
         </div>
     </div>
 </nav>

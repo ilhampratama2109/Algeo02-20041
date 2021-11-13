@@ -2,44 +2,53 @@
 
 {% block header %}
 
-    <div class="bg-image shadow-1-strong text-white"
-         style="background-image: url('/static/img/header.jpg'); height: 50vh">
-        <h1 class="text-center mt-0 pt-5">Selamat Datang di {{ title }}</h1>
-        <p class="pt-5 ms-5 me-5"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut vitae accumsan justo. 
-        Aliquam commodo felis in tellus rhoncus auctor. Cras ut enim sed sem molestie tempus et ut lectus.
-        Aenean feugiat ligula bibendum nulla cursus accumsan. Nam a feugiat purus. 
-        Nam tristique leo a est imperdiet, vitae rhoncus libero tempor. 
-        Pellentesque venenatis purus rutrum tempor accumsan. 
-        </p>
-    </div>
-    <div class="container mt-5 mb-5">
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <table>
-                {{ data_form.as_table }}
-            </table>
-            <div class="d-grid gap-2 col-6 mx-auto">
-                <button class="btn btn-primary" type="Submit">Compress</button>
-            </div>
-        </form>
-    </div>
+        {% if not img_compressed_url and not runtime and not percentage %}
+            <h1 class="welcome text-black text-center mt-0 pt-5">Selamat Datang di {{ title }}</h1>
 
-    <div class="container mb-5">
-        <div class="row">
-            <div class="col">
-                {% if img_url %}
-                    <h5>Before</h5>
-                    <img src="{{ img_url }}" class="img-fluid">
-                {% endif %}
+            <div class="bg-white text-black card border-0 p-5 shadow my-5 m-5 bg-opacity-50">
+                <p class="intro mb-5 fs-5"> Salah satu algoritma yang dapat digunakan untuk kompresi gambar adalah algoritma SVD (Singular Value Decomposition). 
+                Algoritma SVD didasarkan pada teorema dalam aljabar linier yang menyatakan bahwa sebuah matriks dua dimensi dapat dipecah menjadi hasil perkalian dari 3 
+                sub-matriks yaitu matriks ortogonal U, matriks diagonal S, dan transpose dari matriks ortogonal V. Dengan menggunakan hasil dari SVD tersebut, 
+                kita bisa melakukan kompresi gambar sebesar K values.
+                </p>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-2">
+                        {{ data_form.image.label_tag }}
+                        {{ data_form.image }}
+                    </div>
+                    <div>
+                        {{ data_form.rate.label_tag }}
+                        {{ data_form.rate }}
+                    </div>
+
+                    <div class="d-grid gap-2 col-6 mx-auto">
+                        <button class="btn btn-primary mt-5" type="Submit">Compress</button>
+                    </div>
+                </form>
             </div>
-            <div class="col">
-                {% if img_compressed_url %}
-                    <h5>After</h5>
-                    <img src="{{ img_compressed_url }}" class="img-fluid">
-                {% endif %}
+        {% endif %}
+
+        {% if img_compressed_url and runtime and percentage %}
+            <h4 class="text-white text-center pt-5">Image Compressed</h4>
+            <div class="bg-white text-white card border-0 p-5 shadow my-5 mt-5 bg-opacity-10">     
+                <div class="row">
+                    <div class="col">
+                        <h5 class="text-center">Before</h5>
+                        <img src="{{ img_url }}" class="img-fluid rounded mx-auto d-block">
+                    </div>
+                    <div class="col">
+                        <h5 class="text-center">After</h5>
+                        <img src="{{ img_compressed_url }}" class="img-fluid rounded mx-auto d-block">
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    
+            <div class="bg-white text-black card border-0 p-5 shadow my-5 mt-5 bg-opacity-10">
+                <p class="h6">Rank: {{ rate }}</p>
+                <p class="h6">Image pixel difference percentage: {{ percentage }}</p>
+                <p class="h6">Image compression time: {{ runtime }}</p>
+            </div>
+        {% endif %}
+        
 
 {% endblock header %}

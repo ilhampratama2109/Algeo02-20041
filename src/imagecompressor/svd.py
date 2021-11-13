@@ -1,9 +1,10 @@
 from django.core.files.storage import FileSystemStorage
 from .settings import MEDIA_URL
-import math
 from PIL import Image
+from time import time
 import numpy as np
 import io
+import math
 
 def SVD(a) :
 
@@ -16,56 +17,56 @@ def SVD(a) :
 
     eps = 1.e-15
     tol = 1.e-64 / eps
-    assert 1.0 + eps > 1.0
-    assert tol > 0.0
-    m = len(a)
-    n = len(a[0])
+    assert 1 + eps > 1
+    assert tol > 0
+    m = len(a) # mendapatkan jumlah kolom
+    n = len(a[0]) # mendapatkan jumlah baris
 
     # inisialisasi matriks 
 
-    q = [0.0 for i in range (n)]
-    u = [[0.0 for j in range (n)] for i in range (m)]
-    v = [[0.0 for j in range (n)] for i in range (n)]
-    e = [0.0 for i in range (n)]
+    q = [0 for i in range (n)]
+    u = [[0 for j in range (n)] for i in range (m)]
+    v = [[0 for j in range (n)] for i in range (n)]
+    e = [0 for i in range (n)]
     for i in range (m) :
         for j in range (n) :
             u[i][j] = a[i][j]
 
     # Householder's reduction to bidiagonal form
 
-    g = x = 0.0
+    g = x = 0
     for i in range (n) :
         e[i] = g
-        s = 0.0
+        s = 0
         l = i+1
         for j in range (i,m) :
             s = s+(u[j][i])**2
         if s <= tol :
-            g = 0.0
+            g = 0
         else :
             f = u[i][i]
-            if (f < 0.0) :
+            if (f < 0) :
                 g = math.sqrt(s)
             else :
                 g = -math.sqrt(s)
             h = f*g-s
             u[i][i] = f-g
             for j in range (l,n) :
-                s = 0.0
+                s = 0
                 for k in range (i,m) :
                     s = s+u[k][i]*u[k][j]
                 f = s/h
                 for k in range (i,m) :
                     u[k][j] = u[k][j] + f*u[k][i]
         q[i] = g
-        s = 0.0
+        s = 0
         for j in range (l,n) :
             s = s+(u[i][j])**2
         if (s <= tol) :
-            g = 0.0
+            g = 0
         else :
             f = u[i][i+1]
-            if (f < 0.0) :
+            if (f < 0) :
                 g = math.sqrt(s)
             else :
                 g = -math.sqrt(s)
@@ -74,7 +75,7 @@ def SVD(a) :
             for j in range (l,n) :
                 e[j] = u[i][j]/h
             for j in range (l,m) :
-                s = 0.0
+                s = 0
                 for k in range (l,n) :
                     s = s+u[j][k]*u[i][k]
                 for k in range (l,n) :
@@ -87,20 +88,20 @@ def SVD(a) :
 # accumulation of right-hand transformations
 
     for i in range(n-1, -1, -1):
-        if (g != 0.0):
+        if (g != 0):
             h = u[i][i+1] * g
             for j in range(l, n):
                 v[j][i] = u[i][j]/h
             for j in range(l, n):
-                s = 0.0
+                s = 0
                 for k in range(l, n):
                     s = s + u[i][k] * v[k][j]
                 for k in range(l, n):
                     v[k][j] = v[k][j] + s * v[k][i]
         for j in range(l, n):
-            v[j][i] = 0.0
+            v[j][i] = 0
             v[i][j] = v[j][i] 
-        v[i][i] = 1.0
+        v[i][i] = 1
         g = e[i]
         l = i    
 
@@ -111,11 +112,11 @@ def SVD(a) :
         l = i + 1
         g = q[i]
         for j in range(l, n):
-            u[i][j] = 0.0
-        if (g != 0.0):
+            u[i][j] = 0
+        if (g != 0):
             h = u[i][i] * g 
             for j in range(l, n):
-                s = 0.0
+                s = 0
                 for k in range(l, m):
                     s = s + u[k][i] * u[k][j]
                 f = s/h
@@ -125,8 +126,8 @@ def SVD(a) :
                 u[j][i] = u[j][i]/g
         else :
             for j in range(i, m):
-                u[j][i] = 0.0
-        u[i][i] = u[i][i] + 1.0
+                u[j][i] = 0
+        u[i][i] = u[i][i] + 1
 
 # COMMENT 5
 # diagonalization of tile bidiagonal form
@@ -146,8 +147,8 @@ def SVD(a) :
                     break 
             if not test_f_convergence:
                 #cancellation of e[l] if l>0
-                c = 0.0
-                s = 1.0
+                c = 0
+                s = 1
                 l1 = l-1
                 for i in range(l,k+1):
                     f = s*e[i]
@@ -167,9 +168,9 @@ def SVD(a) :
                         u[j][i] = -y*s+z*c
             # test f convergence
             z = q[k]
-            if l == k:
+            if (l == k):
                 # convergence
-                if z<0.0:
+                if (z < 0):
                     #q[k] is made non-negative
                     q[k] = -z
                     for j in range(n):
@@ -180,15 +181,15 @@ def SVD(a) :
             y = q[k-1]
             g = e[k-1]
             h = e[k]
-            f = ((y-z)*(y+z)+(g-h)*(g+h))/(2.0*h*y)
-            g = modSqrt(f,1.0)
-            if f < 0:
+            f = ((y-z)*(y+z)+(g-h)*(g+h))/(2*h*y)
+            g = modSqrt(f,1)
+            if (f < 0):
                 f = ((x-z)*(x+z)+h*(y/(f-g)-h))/x
             else:
                 f = ((x-z)*(x+z)+h*(y/(f+g)-h))/x
             # next QR transformation
-            c = 1.0
-            s = 1.0
+            c = 1
+            s = 1
             for i in range(l+1,k+1):
                 g = e[i]
                 y = q[i]
@@ -218,7 +219,7 @@ def SVD(a) :
                     z = u[j][i]
                     u[j][i-1] = y*c+z*s
                     u[j][i] = -y*s+z*c
-            e[l] = 0.0
+            e[l] = 0
             e[k] = f
             q[k] = x
             # goto test f splitting
@@ -230,7 +231,7 @@ def transposeMatrix(M):
     m = len(M)
     n = len(M[0])
     TM = []
-    for i in range(n): TM.append([0.0]*m) # inisiliasi matriks
+    for i in range(n): TM.append([0]*m) # inisiliasi matriks
     for i in range(m):
         for j in range(n):
             TM[j][i] = M[i][j]
@@ -239,23 +240,29 @@ def transposeMatrix(M):
 def modSqrt(a, b):
     absa = abs(a)
     absb = abs(b)
-    if absa > absb: 
-        return absa*math.sqrt(1.0+(absb/absa)**2)
+    if (absa > absb): 
+        return absa*math.sqrt(1+(absb/absa)**2)
     else:
-        if absb == 0.0: 
-            return 0.0
+        if (absb == 0): 
+            return 0
         else: 
-            return absb*math.sqrt(1.0+(absa/absb)**2)
+            return absb*math.sqrt(1+(absa/absb)**2)
 
 def compress(image_url, k):
     k = int(k)
+
     # image processing
+
+    start = time()
+
     img = Image.open("C:/Tubes Algeo/Tubes 2/Algeo02-20041/src" + image_url)
     img_format = img.format
     print(format)
     image = np.array(img)
     image = image/255
     row,col,_ = image.shape
+
+    percentage = "{0:.2f}".format(((row*k + k + k*col) / (row*col)) * 100)
 
     print("pixels: ",row, " ", col)
 
@@ -307,7 +314,9 @@ def compress(image_url, k):
     fs = FileSystemStorage()
     compressed_img = fs.save("hasil." + img_format, b)
     b.seek(0)
-    #im.save("hasil.jpg")
+
+    end = time()
+    run_time = "{0:.2f}".format(end - start)
     print("Selesai")
-    return fs.url(compressed_img)
+    return fs.url(compressed_img), run_time, percentage
     
