@@ -1,7 +1,9 @@
-from __future__ import division
+from django.core.files.storage import FileSystemStorage
+from .settings import MEDIA_URL
 import math
 from PIL import Image
 import numpy as np
+import io
 
 def SVD(a) :
 
@@ -245,58 +247,67 @@ def modSqrt(a, b):
         else: 
             return absb*math.sqrt(1.0+(absa/absb)**2)
 
-# image processing
-img = Image.open("C:/Tubes Algeo/Tubes 2/Algeo02-20041/svd/landscape.jpg")
+def compress(image_url, k):
+    k = int(k)
+    # image processing
+    img = Image.open("C:/Tubes Algeo/Tubes 2/Algeo02-20041/src" + image_url)
+    img_format = img.format
+    print(format)
+    image = np.array(img)
+    image = image/255
+    row,col,_ = image.shape
 
-image = np.array(img)
-image = image/255
-row,col,_ = image.shape
+    print("pixels: ",row, " ", col)
 
-print("pixels: ",row, " ", col)
+    image_red = image[:,:,0]
+    image_green = image[:,:,1]
+    image_blue = image[:,:,2]
 
-image_red = image[:,:,0]
-image_green = image[:,:,1]
-image_blue = image[:,:,2]
+    landscape = False
+    if col > row:
+        landscape = True
+        image_red = np.transpose(image_red)
+        image_green = np.transpose(image_green)
+        image_blue =  np.transpose(image_blue)
 
-landscape = False
-if col > row:
-    landscape = True
-    image_red = np.transpose(image_red)
-    image_green = np.transpose(image_green)
-    image_blue =  np.transpose(image_blue)
+    u_r,q_r,v_r = SVD(image_red)
+    u_g,q_g,v_g = SVD(image_green)
+    u_b,q_b,v_b = SVD(image_blue)
 
-u_r,q_r,v_r = SVD(image_red)
-u_g,q_g,v_g = SVD(image_green)
-u_b,q_b,v_b = SVD(image_blue)
+    urk = np.array(u_r)[:,0:k]
+    vrk = np.array(v_r)[0:k,:]
+    ugk = np.array(u_g)[:,0:k]
+    vgk = np.array(v_g)[0:k,:]
+    ubk = np.array(u_b)[:,0:k]
+    vbk = np.array(v_b)[0:k,:]
+    qrk = np.array(q_r)[0:k]
+    qgk = np.array(q_g)[0:k]
+    qbk = np.array(q_b)[0:k]
 
-k = 50
-urk = np.array(u_r)[:,0:k]
-vrk = np.array(v_r)[0:k,:]
-ugk = np.array(u_g)[:,0:k]
-vgk = np.array(v_g)[0:k,:]
-ubk = np.array(u_b)[:,0:k]
-vbk = np.array(v_b)[0:k,:]
-qrk = np.array(q_r)[0:k]
-qgk = np.array(q_g)[0:k]
-qbk = np.array(q_b)[0:k]
+    image_red_approx = np.dot(urk,np.dot(np.diag(qrk),vrk))
+    image_green_approx = np.dot(ugk,np.dot(np.diag(qgk),vgk))
+    image_blue_approx = np.dot(ubk,np.dot(np.diag(qbk),vbk))
 
-image_red_approx = np.dot(urk,np.dot(np.diag(qrk),vrk))
-image_green_approx = np.dot(ugk,np.dot(np.diag(qgk),vgk))
-image_blue_approx = np.dot(ubk,np.dot(np.diag(qbk),vbk))
+    if landscape:
+        image_red_approx = np.transpose(image_red_approx)
+        image_green_approx = np.transpose(image_green_approx)
+        image_blue_approx = np.transpose(image_blue_approx)
 
-if landscape:
-    image_red_approx = np.transpose(image_red_approx)
-    image_green_approx = np.transpose(image_green_approx)
-    image_blue_approx = np.transpose(image_blue_approx)
+    image_recons = np.zeros((row,col,3))
+    image_recons[:,:,0] = image_red_approx
+    image_recons[:,:,1] = image_green_approx
+    image_recons[:,:,2] = image_blue_approx
 
-image_recons = np.zeros((row,col,3))
-image_recons[:,:,0] = image_red_approx
-image_recons[:,:,1] = image_green_approx
-image_recons[:,:,2] = image_blue_approx
+    image_recons[image_recons < 0] = 0
+    image_recons[image_recons > 1] = 1
 
-image_recons[image_recons < 0] = 0
-image_recons[image_recons > 1] = 1
-
-im = Image.fromarray(np.uint8(image_recons*255))
-im.save("hasil.jpg")
-print("Selesai")
+    im = Image.fromarray(np.uint8(image_recons*255))
+    b = io.BytesIO() # "convert" image object to image file
+    im.save(b, img_format)
+    fs = FileSystemStorage()
+    compressed_img = fs.save("hasil." + img_format, b)
+    b.seek(0)
+    #im.save("hasil.jpg")
+    print("Selesai")
+    return fs.url(compressed_img)
+    

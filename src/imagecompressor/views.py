@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
 from .forms import ImageForm
+from .svd import compress
 
 def index(request):
     image_form = ImageForm()
@@ -16,8 +17,11 @@ def index(request):
 
     if request.method == 'POST':
         uploaded_image = request.FILES['image']
+        print(uploaded_image.name)
         fs = FileSystemStorage()
         name = fs.save(uploaded_image.name, uploaded_image)
         print(fs.url(name))
         context['img_url'] = fs.url(name)
+        context['img_compressed_url'] = compress(context['img_url'], request.POST['rate'])
+
     return render(request, "index.html", context)
