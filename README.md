@@ -29,9 +29,10 @@ Langkah setup dibawah dilakukan pada sistem operasi Windows. Sistem operasi lain
 1. Masuk ke dalam virtual env dengan mengikuti langkah 3 pada bagian "Setup" di atas
 2. **Ganti path untuk membuka image** pada prosedur compress dalam file svd.py sesuai path tempat Anda menyimpan projek. Petunjuk: 
 
-Pada baris kode di bawah:
-``` img = Image.open("C:/Tubes Algeo/Tubes 2/Algeo02-20041/src" + image_url) ```
-Ganti ``` "C:/Tubes Algeo/Tubes 2/Algeo02-20041/src" ```
+   Pada baris kode di bawah:
+   ``` img = Image.open("C:/Tubes Algeo/Tubes 2/Algeo02-20041/src" + image_url) ```
+   
+   Ganti ``` "C:/Tubes Algeo/Tubes 2/Algeo02-20041/src" ``` sesuai path tempat menyimpan projek.
 
 3. Jalankan command `python manage.py runserver`
 4. Buka di dalam browser alamat localhost yang muncul pada cmd
