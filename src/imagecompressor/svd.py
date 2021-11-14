@@ -1,5 +1,4 @@
 from django.core.files.storage import FileSystemStorage
-from .settings import MEDIA_URL
 from PIL import Image
 from time import time
 import numpy as np
@@ -15,8 +14,8 @@ def SVD(a) :
 
 # ALGORITMA
 
-    eps = 1.e-15
-    tol = 1.e-64 / eps
+    eps = 1.e-15 # konstanta yang digunakan dalam tes konvergensi
+    tol = 1.e-64 / eps # konstanta yang bergantung kepada komputer/mesin yg digunakan
     assert 1 + eps > 1
     assert tol > 0
     m = len(a) # mendapatkan jumlah kolom
@@ -32,7 +31,7 @@ def SVD(a) :
         for j in range (n) :
             u[i][j] = a[i][j]
 
-    # Householder's reduction to bidiagonal form
+    # reduksi ke dalam bentuk bidiagonal
 
     g = x = 0
     for i in range (n) :
@@ -84,8 +83,7 @@ def SVD(a) :
         if (y > x) :
             x = y
 
-# COMMENT 3
-# accumulation of right-hand transformations
+    # A.A(transpose)
 
     for i in range(n-1, -1, -1):
         if (g != 0):
@@ -105,8 +103,7 @@ def SVD(a) :
         g = e[i]
         l = i    
 
-# COMMENT 4
-# accumulation of left-hand transformations
+    # A(transpose).A
 
     for i in range(n-1, -1, -1):
         l = i + 1
@@ -129,24 +126,24 @@ def SVD(a) :
                 u[j][i] = 0
         u[i][i] = u[i][i] + 1
 
-# COMMENT 5
-# diagonalization of tile bidiagonal form
+
+    # diagonalisasi bentuk bidiagonal
 
     eps = eps*x
     for k in range(n-1, -1, -1):
         while True:
-            # test f splitting
+            # tes f splitting
             for l in range(k,-1,-1):
                 test_f_convergence = False
                 if (abs(e[l]) <= eps):
-                    # goto test f convergence
+                    # masuk ke test f convergence
                     test_f_convergence = True
                     break  
                 if (abs(q[l-1]) <= eps):
-                    # goto cancellation
+                    # masuk ke cancellation
                     break 
             if not test_f_convergence:
-                #cancellation of e[l] if l>0
+                # cancellation 
                 c = 0
                 s = 1
                 l1 = l-1
@@ -154,7 +151,7 @@ def SVD(a) :
                     f = s*e[i]
                     e[i] = c*e[i]
                     if abs(f) <= eps:
-                        #goto test f convergence
+                        # masuk ke test f convergence
                         break
                     g = q[i]
                     h = modSqrt(f,g)
@@ -171,12 +168,11 @@ def SVD(a) :
             if (l == k):
                 # convergence
                 if (z < 0):
-                    #q[k] is made non-negative
+                    # q[k] dibuat tidak negatif
                     q[k] = -z
                     for j in range(n):
                         v[j][k] = -v[j][k]
                 break  
-            # shift from bottom 2x2 minor
             x = q[l]
             y = q[k-1]
             g = e[k-1]
@@ -187,7 +183,7 @@ def SVD(a) :
                 f = ((x-z)*(x+z)+h*(y/(f-g)-h))/x
             else:
                 f = ((x-z)*(x+z)+h*(y/(f+g)-h))/x
-            # next QR transformation
+            # transformasi QR selanjutnya
             c = 1
             s = 1
             for i in range(l+1,k+1):
@@ -222,12 +218,17 @@ def SVD(a) :
             e[l] = 0
             e[k] = f
             q[k] = x
-            # goto test f splitting
+            # masuk ke tes f splitting
 
     vt = transposeMatrix(v)
     return u,q,vt
 
-def transposeMatrix(M):
+def transposeMatrix(M): # fungsi transpose matriks 
+    # KAMUS LOKAL
+    # m, n: integer
+    # TM: matriks
+
+    # ALGORITMA
     m = len(M)
     n = len(M[0])
     TM = []
@@ -237,24 +238,25 @@ def transposeMatrix(M):
             TM[j][i] = M[i][j]
     return TM
 
-def modSqrt(a, b):
-    absa = abs(a)
-    absb = abs(b)
-    if (absa > absb): 
-        return absa*math.sqrt(1+(absb/absa)**2)
+def modSqrt(a, b): # fungsi sqrt yang dimodifikasi
+    # KAMUS LOKAL
+    # x, y : integer
+
+    # ALGORITMA
+    x = abs(a)
+    y = abs(b)
+    if (x > y): 
+        return x*math.sqrt(1+(y/x)**2)
     else:
-        if (absb == 0): 
+        if (y == 0): 
             return 0
         else: 
-            return absb*math.sqrt(1+(absa/absb)**2)
+            return y*math.sqrt(1+(x/y)**2)
 
-def compress(image_url, percent):
-
-    # image processing
-
+def compress(image_url, percent): # fungsi kompresi gambar
     start = time()
 
-    img = Image.open("C:/Tubes Algeo/Tubes 2/Algeo02-20041/src" + image_url)
+    img = Image.open("C:/Tubes Algeo/Tubes 2/Algeo02-20041/src" + image_url) # disesuaikan dengan directory projek
     img_format = img.format
     print(format)
     image = np.array(img)
@@ -262,7 +264,6 @@ def compress(image_url, percent):
     row,col,_ = image.shape
     k = round(int(percent) * row * col / (100 * (row + col + 1)))
 
-    #percentage = "{0:.2f}".format(((row*k + k + k*col) / (row*col)) * 100)
     print("pixels: ",row, " ", col)
 
     image_red = image[:,:,0]
@@ -308,7 +309,7 @@ def compress(image_url, percent):
     image_recons[image_recons > 1] = 1
 
     im = Image.fromarray(np.uint8(image_recons*255))
-    b = io.BytesIO() # "convert" image object to image file
+    b = io.BytesIO() # "convert" objek Image ke bentuk file gambar
     im.save(b, img_format)
     fs = FileSystemStorage()
     compressed_img = fs.save("hasil." + img_format, b)

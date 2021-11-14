@@ -1,9 +1,18 @@
 # Algeo02-20041
 Tubes 2 Algeo
+
+Website kompresi gambar menggunakan metode Singular Value Decomposition (SVD). Algoritma perhitungan SVD yang digunakan adalah algoritma yang dikemukakan oleh G.H.Golub dan C.Reinsch.
+
 Anggota :
 1. Ilham Pratama - 13520041
 2. Mohamad Daffa Argakoesoemah - 13520118
 3. Haidar Ihzaulhaq - 13520150
+
+## Tools
+- Django 3.2.8
+- Bootstrap 5.0
+- Numpy
+- Pillow
 
 ## Setup
 Langkah setup dibawah dilakukan pada sistem operasi Windows. Sistem operasi lainnya silakan menyesuaikan.
@@ -13,7 +22,9 @@ Langkah setup dibawah dilakukan pada sistem operasi Windows. Sistem operasi lain
 3. Di dalam cmd, masuk ke dalam directory: namafolder/Scripts lalu ketik command `activate`
 4. Pada cmd, jika sebelum root folder terdapat `(namafolder)` artinya Anda berhasil masuk ke dalam virtual env
 5. Unduh Django versi 3.2.8 dengan command `pip install Django==3.2.8`
-6. Cek apakah Django sudah terunduh dengan command `pip list`
+6. Unduh numpy dengan perintah `pip install numpy`
+7. Unduh Pillow dengan perintah `pip install pillow`
+6. Cek apakah ketiga tools di atas sudah terunduh dengan command `pip list`
 
 ## Menjalankan Projek pada localhost
 1. Masuk ke dalam virtual env dengan mengikuti langkah 3 pada bagian "Setup" di atas
