@@ -6,11 +6,15 @@ a {
     height: 100vh;
 }
 
+.heading {
+    font: url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Source+Sans+Pro:wght@200&display=swap');
+}
+
 .intro {
     font-weight: 350;
     color: rgb(41, 38, 38);
 }
 
-.heading {
-    font: url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Source+Sans+Pro:wght@200&display=swap');
+.lead {
+    font-weight: 375;
 }

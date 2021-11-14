@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
+from django.http.response import HttpResponse
 from .forms import ImageForm
 from .svd import compress
+import mimetypes
 
 def index(request):
     image_form = ImageForm()
@@ -23,6 +25,6 @@ def index(request):
         print(fs.url(name))
         context['img_url'] = fs.url(name)
         context['rate'] = request.POST['rate']
-        context['img_compressed_url'], context['runtime'], context['percentage']  = compress(context['img_url'], request.POST['rate'])
+        context['img_compressed_url'], context['runtime'], context['rank']  = compress(context['img_url'], request.POST['rate'])
 
     return render(request, "index.html", context)

@@ -9,7 +9,7 @@ import math
 def SVD(a) :
 
 # KAMUS LOKAL
-# i, j, k, l , l1: integer
+# i, j, k, l, g, l1: integer
 # c, f, g, h, s, x, y, z: float
 # q, e: array
 
@@ -248,8 +248,7 @@ def modSqrt(a, b):
         else: 
             return absb*math.sqrt(1+(absa/absb)**2)
 
-def compress(image_url, k):
-    k = int(k)
+def compress(image_url, percent):
 
     # image processing
 
@@ -259,11 +258,11 @@ def compress(image_url, k):
     img_format = img.format
     print(format)
     image = np.array(img)
-    image = image/255
+    image = image / 255
     row,col,_ = image.shape
+    k = round(int(percent) * row * col / (100 * (row + col + 1)))
 
-    percentage = "{0:.2f}".format(((row*k + k + k*col) / (row*col)) * 100)
-
+    #percentage = "{0:.2f}".format(((row*k + k + k*col) / (row*col)) * 100)
     print("pixels: ",row, " ", col)
 
     image_red = image[:,:,0]
@@ -318,5 +317,4 @@ def compress(image_url, k):
     end = time()
     run_time = "{0:.2f}".format(end - start)
     print("Selesai")
-    return fs.url(compressed_img), run_time, percentage
-    
+    return fs.url(compressed_img), run_time, k

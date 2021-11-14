@@ -12,11 +12,11 @@ class ImageForm(forms.Form):
     )
     rate = forms.IntegerField(
         min_value=1,
-        label='Rank', 
+        label='Image compression rate', 
         widget = forms.NumberInput(
             attrs={
                 'class':'form-control',
-                'placeholder':'Input matrix rank',
+                'placeholder':'Input rate (%)',
             }
         )    
     )

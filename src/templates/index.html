@@ -2,10 +2,10 @@
 
 {% block header %}
 
-        {% if not img_compressed_url and not runtime and not percentage %}
-            <h1 class="welcome text-black text-center mt-0 pt-5">Selamat Datang di {{ title }}</h1>
+        {% if not img_compressed_url and not runtime and not rank %}
+            <h1 class="display-6 text-black text-center mt-0 pt-5">Welcome to {{ title }}</h1>
 
-            <div class="bg-white text-black card border-0 p-5 shadow my-5 m-5 bg-opacity-50">
+            <div class="bg-white text-black card border-0 p-5 shadow my-5 m-5 bg-opacity-10">
                 <p class="intro mb-5 fs-5"> Salah satu algoritma yang dapat digunakan untuk kompresi gambar adalah algoritma SVD (Singular Value Decomposition). 
                 Algoritma SVD didasarkan pada teorema dalam aljabar linier yang menyatakan bahwa sebuah matriks dua dimensi dapat dipecah menjadi hasil perkalian dari 3 
                 sub-matriks yaitu matriks ortogonal U, matriks diagonal S, dan transpose dari matriks ortogonal V. Dengan menggunakan hasil dari SVD tersebut, 
@@ -29,24 +29,25 @@
             </div>
         {% endif %}
 
-        {% if img_compressed_url and runtime and percentage %}
-            <h4 class="text-white text-center pt-5">Image Compressed</h4>
-            <div class="bg-white text-white card border-0 p-5 shadow my-5 mt-5 bg-opacity-10">     
+        {% if img_compressed_url and runtime and rank %}
+            <h4 class="display-6 text-center pt-5">Image Compressed</h4>
+            <div class="bg-white card border-0 p-5 shadow my-5 m-5 bg-opacity-10">     
                 <div class="row">
                     <div class="col">
-                        <h5 class="text-center">Before</h5>
+                        <h4 class="text-center">Before</h4>
                         <img src="{{ img_url }}" class="img-fluid rounded mx-auto d-block">
                     </div>
                     <div class="col">
-                        <h5 class="text-center">After</h5>
+                        <h4 class="text-center">After</h4>
                         <img src="{{ img_compressed_url }}" class="img-fluid rounded mx-auto d-block">
                     </div>
                 </div>
             </div>
-            <div class="bg-white text-black card border-0 p-5 shadow my-5 mt-5 bg-opacity-10">
-                <p class="h6">Rank: {{ rate }}</p>
-                <p class="h6">Image pixel difference percentage: {{ percentage }}</p>
-                <p class="h6">Image compression time: {{ runtime }}</p>
+            <div class="bg-white text-black card border-0 p-5 shadow my-5 m-5 bg-opacity-10">
+                <p class="lead">Rank: {{ rank }}</p>
+                <p class="lead">Image pixel difference percentage: {{ rate }}%</p>
+                <p class="lead">Image compression time: {{ runtime }} sec</p>
+                <a class="btn btn-primary mt-3" href="{{ img_compressed_url }}" type="button">Download Image</a>
             </div>
         {% endif %}
         
