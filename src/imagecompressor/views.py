@@ -19,10 +19,10 @@ def index(request):
 
     if request.method == 'POST':
         uploaded_image = request.FILES['image']
-        print(uploaded_image.name)
+        if ' ' in uploaded_image.name:
+            uploaded_image.name = (uploaded_image.name).replace(" ","")
         fs = FileSystemStorage()
         name = fs.save(uploaded_image.name, uploaded_image)
-        print(fs.url(name))
         context['img_url'] = fs.url(name)
         context['rate'] = request.POST['rate']
         context['img_compressed_url'], context['runtime'], context['rank']  = compress(context['img_url'], request.POST['rate'])
